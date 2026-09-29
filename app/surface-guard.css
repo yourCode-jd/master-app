@@ -1,0 +1,26 @@
+/* Final route-safe surface guard: keep the app in the graphite theme. */
+html:root {
+  --bg: #080a09;
+  --surface: rgb(18 21 20 / 92%);
+  --surface-elevated: rgb(26 30 28 / 94%);
+  --surface-muted: #151a18;
+  --text: #f4f8f5;
+  --text-secondary: #a7b2ac;
+  --text-muted: #748078;
+  --border: rgb(255 255 255 / 10%);
+  --border-strong: rgb(255 255 255 / 18%);
+}
+
+body { background-color: #080a09 !important; color: #f4f8f5; }
+.card {
+  color: #f4f8f5;
+  background: linear-gradient(145deg, rgb(28 32 30 / 96%), rgb(13 16 15 / 97%)) !important;
+  border-color: rgb(255 255 255 / 10%) !important;
+}
+.input, .textarea, .search-field {
+  color: #eff9f2 !important;
+  background-color: #0b100e !important;
+  border-color: rgb(255 255 255 / 12%) !important;
+}
+.button-secondary, .button-outline { color: #e9f0eb !important; background-color: rgb(255 255 255 / 5%) !important; border-color: rgb(255 255 255 / 13%) !important; }
+.popover > div, .dialog, .component-drawer { color: #f4f8f5; background-color: #121614 !important; }

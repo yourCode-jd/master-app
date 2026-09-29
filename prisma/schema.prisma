@@ -1,0 +1,413 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Gym {
+  id               String                @id @default(cuid())
+  name             String
+  createdAt        DateTime              @default(now())
+  users            User[]
+  members          Member[]
+  audits           AuditLog[]
+  memberships      Membership[]
+  notes            Note[]
+  preferences      AttentionPreference[]
+  activities       MemberActivity[]
+  goals            Goal[]
+  assessments      Assessment[]
+  metrics          ProgressMetric[]
+  reviews          ProgressReview[]
+  milestones       Milestone[]
+  attentionItems   AttentionItem[]
+  intelligenceRuns IntelligenceRun[]
+  interventions     Intervention[]
+  interventionAssignments InterventionAssignment[]
+  trainerInteractions TrainerInteraction[]
+}
+
+model User {
+  id              String           @id @default(cuid())
+  gymId           String
+  name            String
+  email           String           @unique
+  role            String
+  passwordHash    String
+  createdAt       DateTime         @default(now())
+  gym             Gym              @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  audits          AuditLog[]       @relation("AuditActor")
+  memberProfile   Member?          @relation("MemberAccount")
+  trainedMembers  Member[]         @relation("TrainerMembers")
+  authoredNotes   Note[]           @relation("NoteAuthor")
+  activities      MemberActivity[] @relation("ActivityActor")
+  assessments     Assessment[]     @relation("AssessmentTrainer")
+  progressReviews ProgressReview[] @relation("ReviewTrainer")
+  assignedInterventions Intervention[] @relation("InterventionAssignee")
+  createdInterventions Intervention[] @relation("InterventionCreator")
+  trainerInteractions TrainerInteraction[] @relation("InteractionTrainer")
+
+  @@index([gymId, role])
+}
+
+model Member {
+  id                  String               @id @default(cuid())
+  gymId               String
+  fullName            String
+  email               String
+  phone               String
+  membershipStatus    String
+  memberState         String
+  attentionLevel      String
+  joinDate            DateTime
+  membershipEnd       DateTime
+  assignedTrainer     String?
+  trainerId           String?
+  userId              String?
+  goal                String
+  lastVisit           DateTime?
+  createdAt           DateTime             @default(now())
+  gym                 Gym                  @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  visits              Visit[]
+  trainer             User?                @relation("TrainerMembers", fields: [trainerId], references: [id], onDelete: SetNull)
+  user                User?                @relation("MemberAccount", fields: [userId], references: [id], onDelete: SetNull)
+  memberships         Membership[]
+  notes               Note[]
+  attentionPreference AttentionPreference?
+  activities          MemberActivity[]
+  goals               Goal[]
+  assessments         Assessment[]
+  metrics             ProgressMetric[]
+  reviews             ProgressReview[]
+  milestones          Milestone[]
+  stateHistory        MemberStateHistory[]
+  attentionItems      AttentionItem[]
+  interventions      Intervention[]
+  trainerInteractions TrainerInteraction[]
+
+  @@unique([gymId, email])
+  @@unique([userId])
+  @@index([gymId, memberState])
+  @@index([gymId, membershipStatus])
+  @@index([gymId, trainerId])
+}
+
+model Visit {
+  id        String   @id @default(cuid())
+  gymId     String
+  memberId  String
+  visitedAt DateTime @default(now())
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([gymId, visitedAt])
+  @@index([memberId, visitedAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  gymId      String
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String
+  before     String?
+  after      String?
+  createdAt  DateTime @default(now())
+  gym        Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  actor      User?    @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([gymId, createdAt])
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  gymId     String
+  memberId  String
+  planName  String
+  amount    Int
+  status    String
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  gym       Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([gymId, status])
+  @@index([memberId, endDate])
+}
+
+model Note {
+  id         String   @id @default(cuid())
+  gymId      String
+  memberId   String
+  authorId   String
+  body       String
+  visibility String   @default("STAFF")
+  createdAt  DateTime @default(now())
+  gym        Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member     Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  author     User     @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, createdAt])
+}
+
+model AttentionPreference {
+  id             String   @id @default(cuid())
+  gymId          String
+  memberId       String   @unique
+  level          String   @default("OCCASIONAL_CHECK_IN")
+  contactMethod  String   @default("WHATSAPP")
+  noInterruption Boolean  @default(false)
+  trainerGender  String?
+  updatedAt      DateTime @updatedAt
+  gym            Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member         Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([gymId, level])
+}
+
+model MemberActivity {
+  id        String   @id @default(cuid())
+  gymId     String
+  memberId  String
+  actorId   String?
+  type      String
+  message   String
+  createdAt DateTime @default(now())
+  gym       Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  actor     User?    @relation("ActivityActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([memberId, createdAt])
+}
+
+model Goal {
+  id            String    @id @default(cuid())
+  gymId         String
+  memberId      String
+  type          String
+  title         String
+  description   String?
+  startingValue Decimal?  @db.Decimal(12, 3)
+  targetValue   Decimal?  @db.Decimal(12, 3)
+  unit          String?
+  startDate     DateTime
+  targetDate    DateTime?
+  status        String    @default("ACTIVE")
+  isPrimary     Boolean   @default(false)
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  gym           Gym       @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member        Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, status])
+  @@index([gymId, type])
+}
+
+model Assessment {
+  id           String   @id @default(cuid())
+  gymId        String
+  memberId     String
+  trainerId    String?
+  assessedAt   DateTime
+  weight       Decimal? @db.Decimal(12, 3)
+  bodyFat      Decimal? @db.Decimal(5, 2)
+  measurements String?
+  strength     String?
+  endurance    String?
+  mobility     String?
+  notes        String?
+  photos       String?
+  createdAt    DateTime @default(now())
+  gym          Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member       Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  trainer      User?    @relation("AssessmentTrainer", fields: [trainerId], references: [id], onDelete: SetNull)
+
+  @@index([memberId, assessedAt])
+}
+
+model ProgressMetric {
+  id         String   @id @default(cuid())
+  gymId      String
+  memberId   String
+  type       String
+  value      Decimal  @db.Decimal(12, 3)
+  unit       String
+  recordedAt DateTime
+  source     String
+  notes      String?
+  createdAt  DateTime @default(now())
+  gym        Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member     Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, type, recordedAt, source])
+  @@index([memberId, type, recordedAt])
+}
+
+model ProgressReview {
+  id             String    @id @default(cuid())
+  gymId          String
+  memberId       String
+  trainerId      String?
+  reviewedAt     DateTime
+  attendance     String?
+  adherence      String?
+  improvements   String?
+  problems       String?
+  planChanges    String?
+  nextReviewDate DateTime?
+  notes          String?
+  createdAt      DateTime  @default(now())
+  gym            Gym       @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member         Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  trainer        User?     @relation("ReviewTrainer", fields: [trainerId], references: [id], onDelete: SetNull)
+
+  @@index([memberId, reviewedAt])
+}
+
+model Milestone {
+  id          String   @id @default(cuid())
+  gymId       String
+  memberId    String
+  type        String
+  title       String
+  description String?
+  achievedAt  DateTime
+  isAutomatic Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  gym         Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, type, title])
+  @@index([memberId, achievedAt])
+}
+
+model MemberStateHistory {
+  id            String   @id @default(cuid())
+  gymId         String
+  memberId      String
+  previousState String?
+  state         String
+  reason        String
+  source        String
+  calculatedAt  DateTime @default(now())
+  member        Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, calculatedAt])
+}
+
+model AttentionItem {
+  id                String   @id @default(cuid())
+  gymId             String
+  memberId          String
+  ruleId            String
+  title             String
+  reason            String
+  priority          String
+  recommendedAction String
+  assignedRole      String
+  assignedUserId    String?
+  status            String   @default("OPEN")
+  dueAt             DateTime
+  resolution        String?
+  resolvedAt        DateTime?
+  deduplicationKey  String   @unique
+  relatedState      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  gym               Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member            Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  interventions      Intervention[]
+  @@index([gymId, status, priority])
+}
+
+model Intervention {
+  id                String   @id @default(cuid())
+  gymId             String
+  memberId          String
+  attentionItemId   String?
+  type              String
+  reason            String
+  recommendedAction String
+  assignedToId      String?
+  createdByUserId   String?
+  title             String   @default("Member intervention")
+  priority          String   @default("MEDIUM")
+  assignedAt        DateTime?
+  startedAt         DateTime?
+  resolutionSummary String?
+  deduplicationKey  String?  @unique
+  assignedRole      String
+  status            String   @default("OPEN")
+  dueAt             DateTime
+  actionTaken       String?
+  memberResponse    String?
+  followUpAt        DateTime?
+  completedAt       DateTime?
+  outcomeStatus     String   @default("PENDING")
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  gym               Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member            Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  attentionItem     AttentionItem? @relation(fields: [attentionItemId], references: [id], onDelete: SetNull)
+  assignedTo        User?    @relation("InterventionAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdBy        User?    @relation("InterventionCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  assignments      InterventionAssignment[]
+  interactions     TrainerInteraction[]
+
+  @@index([gymId, status, dueAt])
+  @@index([memberId, createdAt])
+  @@index([assignedToId, status, dueAt])
+  @@index([gymId, priority, status])
+}
+
+model InterventionAssignment {
+  id                String   @id @default(cuid())
+  gymId             String
+  interventionId    String
+  previousAssigneeId String?
+  newAssigneeId     String?
+  changedByUserId   String
+  reason            String?
+  createdAt         DateTime @default(now())
+  gym               Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  intervention      Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+
+  @@index([interventionId, createdAt])
+}
+
+model TrainerInteraction {
+  id              String   @id @default(cuid())
+  gymId           String
+  memberId        String
+  trainerId       String
+  interventionId  String?
+  type            String
+  notes           String?
+  occurredAt      DateTime @default(now())
+  createdAt       DateTime @default(now())
+  gym             Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+  member          Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  trainer         User     @relation("InteractionTrainer", fields: [trainerId], references: [id], onDelete: Cascade)
+  intervention    Intervention? @relation(fields: [interventionId], references: [id], onDelete: SetNull)
+
+  @@index([memberId, occurredAt])
+  @@index([trainerId, occurredAt])
+}
+
+model IntelligenceRun {
+  id               String   @id @default(cuid())
+  gymId            String
+  membersEvaluated Int
+  rulesTriggered   Int
+  newItems         Int
+  resolvedItems    Int
+  createdAt        DateTime @default(now())
+  gym              Gym      @relation(fields: [gymId], references: [id], onDelete: Cascade)
+}

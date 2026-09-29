@@ -1,0 +1,19 @@
+import { ArrowUpRight, BellRing, CalendarDays, UsersRound } from "lucide-react";
+import { Badge, Card } from "@/components/ui";
+import { requireUser } from "@/lib/auth";
+import { db } from "@/lib/db";
+
+const tone = (priority: string) => priority === "CRITICAL" ? "danger" : priority === "HIGH" ? "warning" : priority === "OPPORTUNITY" ? "success" : "info" as const;
+export default async function IntelligenceDashboard() {
+  const user = await requireUser("dashboard:view");
+  const open = { gymId: user.gymId, status: { in: ["OPEN", "ASSIGNED", "IN_PROGRESS"] } };
+  const [activeMembers, attentionTotal, critical, opportunities, items] = await Promise.all([
+    db.member.count({ where: { gymId: user.gymId, membershipStatus: "ACTIVE" } }),
+    db.attentionItem.count({ where: open }),
+    db.attentionItem.count({ where: { ...open, priority: { in: ["CRITICAL", "HIGH"] } } }),
+    db.attentionItem.count({ where: { ...open, priority: "OPPORTUNITY" } }),
+    db.attentionItem.findMany({ where: open, include: { member: { select: { fullName: true } } }, orderBy: [{ dueAt: "asc" }, { createdAt: "desc" }], take: 5 }),
+  ]);
+  const metrics = [{ label: "Active members", value: activeMembers, note: "Live membership records" }, { label: "Need attention", value: attentionTotal, note: `${critical} high-priority item${critical === 1 ? "" : "s"}` }, { label: "Opportunities", value: opportunities, note: "Renewal, goal, and PT signals" }, { label: "Queue coverage", value: `${items.length}/5`, note: "Next actions shown below" }];
+  return <><header className="page-header"><div><p className="eyebrow">Gym intelligence</p><h1>What deserves attention today?</h1><p>A decision view backed by the current member, visit, and progress data.</p></div><a className="button button-primary" href="/attention">Open queue <ArrowUpRight size={16}/></a></header><section className="stat-grid" aria-label="Member overview">{metrics.map((metric) => <Card key={metric.label}><p className="stat-label">{metric.label}</p><p className="stat-value">{metric.value}</p><p className="stat-note">{metric.note}</p></Card>)}</section><section className="dashboard-grid"><Card><h2 className="section-title">Attention queue <a href="/attention" className="small">View all</a></h2>{items.length === 0 ? <p className="small">No members need attention right now.</p> : <div className="list">{items.map((item) => <div className="list-item" key={item.id}><BellRing size={18}/><div style={{ flex: 1 }}><a className="member-link" href={`/members/${item.memberId}`}><strong>{item.member.fullName}</strong></a><p className="small" style={{ margin: "3px 0 0" }}>{item.reason} · {item.recommendedAction}</p></div><Badge tone={tone(item.priority)}>{item.priority}</Badge></div>)}</div>}</Card><Card><h2 className="section-title">Demo operating model</h2><div className="list"><div className="list-item"><UsersRound size={19}/><div><strong>Role-scoped attention</strong><p className="small" style={{ margin: "3px 0 0" }}>Trainers see their assigned members; members never see internal intelligence.</p></div></div><div className="list-item"><CalendarDays size={19}/><div><strong>Rule-based next actions</strong><p className="small" style={{ margin: "3px 0 0" }}>Member state remains separate from membership status.</p></div></div><div className="list-item"><Badge tone="info">DEMO</Badge><div><strong>Local-first operation</strong><p className="small" style={{ margin: "3px 0 0" }}>All recommendations are deterministic and persisted in PostgreSQL.</p></div></div></div></Card></section></>;
+}

@@ -1,0 +1,42 @@
+/* Final layout rhythm and compact control geometry. */
+.stat-grid { margin-bottom: 24px; }
+
+select.select,
+select.input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 48px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23dce8e0' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 16px) center;
+  background-size: 14px;
+}
+
+.trainer-work-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px 16px;
+  padding: 16px 0;
+  border-top: 1px solid rgb(255 255 255 / 8%);
+}
+
+.trainer-work-item:first-child { border-top: 0; padding-top: 0; }
+
+.trainer-work-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.trainer-work-actions form { margin: 0; }
+.trainer-work-actions .inline-form { align-items: center; }
+.trainer-work-actions .badge + .button { margin-inline-start: 10px; }
+
+@media (max-width: 700px) {
+  .stat-grid { margin-bottom: 16px; }
+  .trainer-work-item { gap: 10px 12px; padding: 14px 0; }
+  .trainer-work-actions { gap: 8px; }
+}

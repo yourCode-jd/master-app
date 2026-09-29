@@ -1,0 +1,6 @@
+/* The desktop header has one visible flex group; anchor it to the right edge. */
+.topbar { justify-content: flex-end; }
+
+@media (max-width: 900px) {
+  .topbar { justify-content: space-between; }
+}
