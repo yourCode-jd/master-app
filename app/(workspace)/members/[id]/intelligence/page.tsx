@@ -6,7 +6,7 @@ import { assertMemberAccess } from "@/lib/members";
 
 const tone = (state: string) => state === "AT_RISK" ? "danger" : ["DECLINING", "PLATEAU"].includes(state) ? "warning" : "success" as const;
 export default async function MemberIntelligencePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params; const user = await requireUser("members:view");
+  const { id } = await params; const user = await requireUser();
   try { await assertMemberAccess(user, id, false); } catch { notFound(); }
   const member = await db.member.findFirst({ where: { id, gymId: user.gymId }, include: { trainer: { select: { name: true } }, stateHistory: { orderBy: { calculatedAt: "desc" }, take: 8 }, attentionItems: { where: { status: { in: ["OPEN", "ASSIGNED", "IN_PROGRESS"] } }, orderBy: { dueAt: "asc" } } } });
   if (!member) notFound(); const current = member.stateHistory[0];

@@ -39,3 +39,4 @@ export async function requireUser(permission?: Permission) {
   if (permission && !hasPermission(user.role, permission)) redirect("/forbidden");
   return user;
 }
+export async function requireRole(allowed: Role[]) { const user = await requireUser(); if (!allowed.includes(user.role as Role)) redirect("/forbidden"); return user; }

@@ -414,5 +414,104 @@ These should not be introduced until the free/local demo and core product loop a
 - Decision: Store a separate, PostgreSQL-backed intervention for the work itself, with a scoped member, source attention item, assignee, status, due date, action taken, member response, completion timestamp, and optional follow-up.
 - Why: This creates clear operational ownership while preserving the original intelligence signal and making Phase 6 outcome measurement possible.
 - Alternatives considered: Editing attention items in place or treating a dashboard click as completed work.
-- Impact: Trainers can act only on their assigned work; managers and owners can assign work. Completion resolves the source attention item and records an audit/activity trail.
+- Impact: Trainers can act only on their assigned work; managers and owners can assign work. Completion preserves the source attention item as in-progress and records an audit/activity trail; this prevents an action record from being mistaken for a measured outcome.
 - Follow-up: Phase 6 should add before/after evidence and final outcome evaluation without redefining completion.
+
+## DEC-024 — Completing an intervention is not an outcome claim
+
+- Date: 2026-09-30
+- Phase: Trainer Actions
+- Status: Accepted
+- Context: Recording a trainer contact or program change should not silently declare the underlying member issue solved.
+- Decision: Completion stores the action, member response, optional follow-up, trainer interaction, and audit event while the source attention item remains in progress.
+- Why: This keeps operational follow-through separate from effectiveness measurement, which belongs to Phase 6.
+- Impact: Follow-up work remains visible and staff can review action history without fabricated outcome metrics.
+
+
+## DEC-025 — Outcomes preserve evidence and separate association from causation
+
+- Date: 2026-09-30
+- Phase: Outcomes & Effectiveness
+- Status: Accepted
+- Context: Current member data changes over time, so a later dashboard alone cannot truthfully reconstruct the context in which an intervention was evaluated.
+- Decision: Store one tenant-scoped Outcome per intervention with immutable before and after snapshots, transparent suggested metrics, staff confirmation, and optional recorded associated value.
+- Why: This supports trustworthy follow-up without claiming that a trainer action caused a financial or behavioral result.
+- Impact: Improved outcomes can close the related action, while unchanged, declined, unreachable, and insufficient-data outcomes remain visible for follow-up or escalation.
+- Follow-up: Phase 7 may add richer reporting but must keep outcome attribution language conservative.
+
+
+## DEC-026 — The 90-day journey is a workflow layer, not a second progress system
+
+- Date: 2026-09-30
+- Phase: 30/60/90-Day Journey
+- Status: Accepted
+- Context: Early-member retention needs consistent staff follow-through, but goals, attendance, assessments, and metrics already have durable sources of truth.
+- Decision: Store only journey stages and tasks; Day 30/60/90 reviews direct staff to existing member progress and intelligence records rather than duplicating them.
+- Why: This keeps the onboarding experience explainable and avoids conflicting health, attendance, and progress data.
+- Impact: Active journeys are created once per member, tasks become overdue only while active, and paused/cancelled journeys retain their history without false overdue alerts.
+- Follow-up: A future phase may add per-gym template editing while retaining these centralized timing rules.
+
+
+## DEC-027 — Member experience signals are operational records, not a health or satisfaction score
+
+- Date: 2026-09-30
+- Phase: Member Experience, Feedback & Escalations
+- Status: Accepted
+- Context: Feedback, complaints, and discomfort reports need prompt follow-through without turning personal information into a hidden aggregate score or a medical record.
+- Decision: Persist each feedback response, complaint, and non-medical discomfort report separately, preserve the original wording and resolution, and route only serious or repeated negative signals into the existing attention/intervention workflow.
+- Why: Staff can act on a transparent record, members retain visibility of their own submissions, and the app avoids diagnosing or claiming clinical meaning.
+- Alternatives considered: A single sentiment score, dashboard-only alerts, or storing pain as a diagnosis.
+- Impact: Managers/owners receive sensitive queues; trainers see only their assigned members and never confidential trainer feedback; reception receives general operational signals; members see their own records.
+- Follow-up: Future work may add configured request timing and anonymized reporting while retaining these privacy boundaries.
+
+## DEC-028 — Floor occupancy is explicitly simulated, while operational records remain durable
+
+- Date: 2026-09-30
+- Phase: Gym Floor & Equipment Intelligence
+- Status: Accepted
+- Context: The first floor-management release needs useful operational context without cameras, sensors, paid APIs, or misleading live-data claims.
+- Decision: Store manually controlled simulated occupancy as immutable snapshots and label all floor occupancy as simulated. Equipment issues, availability, safety shutdowns, maintenance, resolutions, and audits remain ordinary PostgreSQL operational records.
+- Why: Teams can exercise the real workflow and examine trends while clearly understanding the source and confidence of occupancy data.
+- Alternatives considered: Presenting demo values as live hardware data, or storing only a mutable current occupancy count.
+- Impact: Managers can override zone occupancy, members receive simple busy/availability guidance, and later sensor integration can add a new source without replacing history.
+- Follow-up: Add hardware connectors only after their data quality, privacy boundaries, and source labels are defined.
+
+## DEC-029 — Reception is a time-bound operational workspace
+
+- Date: 2026-09-30
+- Phase: Reception & Front-Desk Operations
+- Status: Accepted
+- Context: Front-desk staff need to act on visitors, renewals, requests, access problems, and handovers without being given private member intelligence or owner analytics.
+- Decision: Persist each reception object independently and surface a compact today-first worklist. Reuse membership, floor, and member records as references rather than duplicating their core data.
+- Why: This makes work attributable and handovers durable while keeping the reception role focused on operational information.
+- Impact: The next staff member must acknowledge a handover from another author; member accounts do not enter the internal reception workspace.
+- Follow-up: Add payment transaction records only when a dedicated payment workflow is introduced.
+
+## DEC-030 — Community is consent-based accountability, not a social feed
+
+- Date: 2026-09-30
+- Phase: Community & Accountability
+- Status: Accepted
+- Decision: Store consent-based group membership, participation, and personal challenge progress while keeping private health, risk, complaint, and comparative metrics out of community views.
+- Why: The useful behavior is joining a relevant group, showing up, and seeing personal progress—not public comparison or social engagement mechanics.
+- Impact: Members control join/leave for open groups; capacity is enforced; attendance challenges reuse stored visits; staff can track activity participation without public shaming.
+- Follow-up: Later matching or recommendation rules must preserve this consent and privacy boundary.
+
+## DEC-031 — The final demo favors traceable local workflows over external integration claims
+
+- Date: 2026-09-30
+- Phase: Complete Demo, System Integration & Final QA
+- Status: Accepted
+- Decision: Treat PostgreSQL records, deterministic rules, and explicit simulator labels as the sole source of truth for the local demo.
+- Why: The end-to-end workflow can be demonstrated and audited without paid APIs, hardware, fabricated real-time assertions, or untraceable data.
+- Impact: Seed/reset, workers, credentials, and known simulator boundaries are documented in README; claims about payments, access, messaging, and occupancy remain deliberately constrained.
+- Follow-up: Production integrations require independent security, privacy, reliability, and data-source reviews.
+
+## DEC-032 — Demo Training Mode is a persisted guidance layer, not an alternate permission model
+
+- Date: 2026-09-30
+- Status: Accepted
+- Decision: Store per-user training progress and event analytics in PostgreSQL, keep scenarios and concise help definitions in application code, and enforce existing role permissions for every guided link and action.
+- Why: Users can practice realistic workflows without a long manual or an unsafe training-only elevation of access.
+- Impact: Reset removes only training progress/events and tagged scenario records; ordinary member, intervention, and operational records remain untouched.
+

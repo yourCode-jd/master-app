@@ -1,11 +1,11 @@
 import { AttentionQueue } from "@/components/attention-queue";
-import { requireUser } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { hasPermission } from "@/lib/permissions";
 
 type Search = Promise<{ q?: string; priority?: string; state?: string; status?: string; role?: string }>;
 export default async function AttentionPage({ searchParams }: { searchParams: Search }) {
-  const user = await requireUser("members:view");
+  const user = await requireRole(["OWNER", "MANAGER", "TRAINER"]);
   const filter = await searchParams;
   const scoped = user.role === "TRAINER" ? { member: { trainerId: user.id } } : {};
   const status = filter.status === "RESOLVED" ? ["EXPIRED"] : filter.status ? [filter.status] : ["OPEN", "ASSIGNED", "IN_PROGRESS"];

@@ -8,7 +8,7 @@ import { db } from "@/lib/db";
 import { addMemberActivity, assertMemberAccess } from "@/lib/members";
 
 const id = z.string().cuid();
-export const interventionTypes = ["TRAINER_CHECK_IN", "GOAL_REVIEW", "PROGRAM_REASSESSMENT", "PERSONAL_OUTREACH", "PT_CONSULTATION", "RENEWAL_DISCUSSION", "WELCOME_CHECK_IN", "PROGRESS_CELEBRATION", "MEMBER_COMPLAINT_FOLLOW_UP", "MANAGER_REVIEW", "SAFETY_ESCALATION", "RECOVERY_CHECK_IN", "OTHER"] as const;
+const interventionTypes = ["TRAINER_CHECK_IN", "GOAL_REVIEW", "PROGRAM_REASSESSMENT", "PERSONAL_OUTREACH", "PT_CONSULTATION", "RENEWAL_DISCUSSION", "WELCOME_CHECK_IN", "PROGRESS_CELEBRATION", "MEMBER_COMPLAINT_FOLLOW_UP", "MANAGER_REVIEW", "SAFETY_ESCALATION", "RECOVERY_CHECK_IN", "OTHER"] as const;
 const priorities = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "OPPORTUNITY"] as const;
 const refresh = (memberId?: string, interventionId?: string) => { revalidatePath("/trainer"); revalidatePath("/attention"); if (memberId) { revalidatePath(`/members/${memberId}`); revalidatePath(`/members/${memberId}/intelligence`); } if (interventionId) revalidatePath(`/trainer/interventions/${interventionId}`); };
 

@@ -6,6 +6,7 @@ import { audit } from "@/lib/audit";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { addMemberActivity, assertMemberAccess } from "@/lib/members";
+import { ensureJourney } from "@/lib/journey";
 
 const createSchema = z.object({ fullName: z.string().trim().min(2).max(100), email: z.string().trim().email(), phone: z.string().trim().min(6).max(30), goal: z.string().trim().min(2).max(140), planName: z.string().trim().min(2).max(80), trainerId: z.string().optional() });
 const memberIdSchema = z.string().cuid();
@@ -20,6 +21,7 @@ export async function createMember(formData: FormData) {
   const start = new Date(); const end = new Date(start); end.setMonth(end.getMonth() + 3);
   const trainer = parsed.data.trainerId ? await db.user.findFirst({ where: { id: parsed.data.trainerId, gymId: actor.gymId, role: "TRAINER" } }) : null;
   const member = await db.$transaction(async (tx) => tx.member.create({ data: { gymId: actor.gymId, fullName: parsed.data.fullName, email: parsed.data.email.toLowerCase(), phone: parsed.data.phone, goal: parsed.data.goal, membershipStatus: "ACTIVE", memberState: "NEW", attentionLevel: "LOW", joinDate: start, membershipEnd: end, trainerId: trainer?.id, assignedTrainer: trainer?.name, memberships: { create: { gymId: actor.gymId, planName: parsed.data.planName, amount: 9000, status: "ACTIVE", startDate: start, endDate: end } }, attentionPreference: { create: { gymId: actor.gymId } }, activities: { create: { gymId: actor.gymId, actorId: actor.id, type: "MEMBER_CREATED", message: "Member profile and initial membership created." } } } }));
+  await ensureJourney(actor.gymId, member.id, trainer?.id, start);
   await audit({ gymId: actor.gymId, actorId: actor.id, action: "MEMBER_CREATED", entityType: "Member", entityId: member.id, after: { fullName: member.fullName } });
   refresh(member.id);
 }
@@ -45,8 +47,8 @@ export async function assignTrainer(formData: FormData) {
 
 export async function updatePreference(formData: FormData) {
   const actor = await requireUser(); const memberId = memberIdSchema.parse(formData.get("memberId")); await assertMemberAccess(actor, memberId, actor.role !== "MEMBER");
-  const level = z.enum(["INDEPENDENT", "OCCASIONAL_CHECK_IN", "CLOSE_COACHING", "FORM_CORRECTION", "GOAL_ACCOUNTABILITY", "SOCIAL_MOTIVATION"]).parse(formData.get("level")); const contactMethod = z.enum(["WHATSAPP", "SMS", "EMAIL", "IN_PERSON"]).parse(formData.get("contactMethod")); const noInterruption = formData.get("noInterruption") === "on";
-  await db.attentionPreference.upsert({ where: { memberId }, create: { gymId: actor.gymId, memberId, level, contactMethod, noInterruption }, update: { level, contactMethod, noInterruption } });
+  const level = z.enum(["INDEPENDENT", "OCCASIONAL_CHECK_IN", "CLOSE_COACHING", "FORM_CORRECTION", "GOAL_ACCOUNTABILITY", "SOCIAL_MOTIVATION"]).parse(formData.get("level")); const contactMethod = z.enum(["WHATSAPP", "SMS", "EMAIL", "IN_PERSON"]).parse(formData.get("contactMethod")); const trainerGender = z.enum(["ANY", "FEMALE", "MALE"]).parse(formData.get("trainerGender") ?? "ANY"); const noInterruption = formData.get("noInterruption") === "on";
+  await db.attentionPreference.upsert({ where: { memberId }, create: { gymId: actor.gymId, memberId, level, contactMethod, noInterruption, trainerGender: trainerGender === "ANY" ? null : trainerGender }, update: { level, contactMethod, noInterruption, trainerGender: trainerGender === "ANY" ? null : trainerGender } });
   await addMemberActivity({ gymId: actor.gymId, memberId, actorId: actor.id, type: "PREFERENCE_UPDATED", message: "Attention preference was updated." }); await audit({ gymId: actor.gymId, actorId: actor.id, action: "PREFERENCE_UPDATED", entityType: "Member", entityId: memberId }); refresh(memberId);
 }
 

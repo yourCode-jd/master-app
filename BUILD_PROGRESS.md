@@ -467,3 +467,76 @@ Update after every phase.
 - Verified: authenticated progress route rendering, typecheck, lint, 6 automated tests, production build artifact, and migration status.
 - Responsive rules support a single-column layout at small widths; automated screenshot capture remains unavailable because headless Chrome does not start in this environment.
 
+## Phase 5 Verification update — 2026-09-30
+
+- Trainer Actions is complete: PostgreSQL migration 0006_phase5_intervention_detail records intervention ownership, deterministic automatic-action keys, assignment history, and trainer interaction history.
+- Verified: attention-to-intervention prefill, scoped trainer queue with search and filters, intervention detail, start/complete/follow-up recording, manager reassignment and management, member intervention history, audit/activity persistence, and role restrictions.
+- Quality checks: typecheck passed; 18/18 automated tests passed; lint passed; production build passed; Prisma migration status is up to date.
+- Responsive QA: Chrome checks passed at 320, 360, 390, 430, 768, 1024, 1440, and 1920px with no horizontal overflow.
+
+## Phase 6 Verification update — 2026-09-30
+
+- Outcomes & Effectiveness is complete: migration 0007_phase6_outcomes adds tenant-scoped outcomes, immutable before/after snapshots, one outcome per intervention, associated-value tracking, and local internal notifications.
+- Verified: centralized timing templates; real attendance, progress, and membership suggestions; manual confirmation and adjustment; improved, unchanged, declined, and insufficient-data paths; attention/intervention updates; member-state recalculation; local outcome-check worker; owner effectiveness view; trainer queue; member outcome history; and role-scoped server actions.
+- Demo data: six persisted outcomes cover attendance recovery, plateau reassessment, unchanged, declined, renewal-associated value, and insufficient-data cases.
+- Quality checks: Prisma schema and all 7 migrations up to date; typecheck passed; 21/21 automated tests passed; lint passed; production build passed.
+- Responsive QA: authenticated Outcomes Due page passed Chrome checks at 320, 360, 390, 430, 768, 1024, 1440, and 1920px with no horizontal overflow.
+
+## Phase 7 Verification update — 2026-09-30
+
+- 30/60/90-Day Member Journey is complete: migration 0008_phase7_member_journey adds tenant-scoped journeys and assigned, required/optional checkpoint tasks.
+- Verified: automatic active-journey creation with duplicate prevention; Day 0, Day 1–3, Week 1, Week 2, Day 30/60/90 workflow; due and overdue logic; pause/cancel guard; trainer task completion; confidence-risk attention/intervention escalation; manager overview; trainer queue; and member-safe simplified journey.
+- Demo data: healthy onboarding, early disengagement, missing-assessment workflow, Day 60/90 checkpoints, and paused-journey scenarios are persisted locally.
+- Quality checks: Prisma schema and all 8 migrations up to date; typecheck passed; 24/24 automated tests passed; lint passed; production build passed.
+- Responsive QA: authenticated Journey dashboard passed Chrome checks at 320, 360, 390, 430, 768, 1024, 1440, and 1920px with no horizontal overflow.
+
+
+## Phase 8 Verification update — 2026-09-30
+
+- Member Experience, Feedback & Escalations is complete: migration 0009_phase8_experience adds tenant-scoped feedback, complaints, and non-medical discomfort follow-up records.
+- Verified: mobile 4-level micro-feedback, stored reasons and free text, attention-preference reuse, confidential trainer feedback, complaint resolution records, safety/repeated-negative escalation, active discomfort warning/follow-up, manager experience queue, trainer/reception/member visibility boundaries, activity/audit records, and local experience worker notifications.
+- Demo data: persisted positive feedback, repeated crowding/equipment feedback, critical safety complaint, confidential trainer complaint, and shoulder-discomfort follow-up scenarios.
+- Quality checks: Prisma schema and all 9 migrations up to date; typecheck passed; 27/27 automated tests passed; lint passed; production build passed.
+- Responsive QA: authenticated Member Experience queue passed Chrome checks at 320, 360, 390, 430, 768, 1024, 1440, and 1920px with no horizontal overflow.
+
+## Phase 9 Verification update — 2026-09-30
+
+- Gym Floor & Equipment Intelligence is complete: migration 0010_phase9_floor_equipment adds tenant-scoped zones, immutable occupancy snapshots, equipment, issues, and maintenance tasks.
+- Verified: simulated zone occupancy with manual manager controls; zone and equipment availability; member/staff issue reporting; automatic out-of-service handling for high and critical reports; internal critical notification; issue resolution records; maintenance due/overdue queue; repeat-equipment scenarios; audit events; and role-gated operational controls.
+- Demo data: evening Free Weights congestion, Cardio normal load, quiet Functional area, cable machine outage, critical unsafe bench, repeat treadmill reports, and overdue maintenance are persisted locally.
+- Quality checks: Prisma schema and all 10 migrations up to date; typecheck passed; 30/30 automated tests passed; lint passed; production build passed.
+- Responsive QA: authenticated Floor Status page passed Chrome checks at 320, 360, 390, 430, 768, 1024, 1440, and 1920px with no horizontal overflow.
+
+## Phase 10 Verification update — 2026-09-30
+
+- Reception & Front-Desk Operations is complete: migration 0011_phase10_reception adds tenant-scoped visitors, member requests, access issues, and shift handovers.
+- Verified: real reception dashboard, visitor arrival workflow, trial/visitor queue, expiring-membership queue, front-desk request and access visibility, trainer/floor operational context, previous-shift handover and cross-staff acknowledgement guard, and audit-backed quick actions.
+- Demo data: a trial arrival, tour arrival, high-priority trainer-change request, QR access issue, and unresolved evening handover are persisted locally.
+- Quality checks: Prisma schema and all 11 migrations up to date; typecheck passed; 30/30 automated tests passed; lint passed; production build passed.
+- Responsive QA: authenticated Reception page passed Chrome checks at 320, 360, 390, 430, 768, 1024, 1440, and 1920px with no horizontal overflow.
+
+## Phase 11 Verification update — 2026-09-30
+
+- Community & Accountability is complete: migration 0012_phase11_community adds tenant-scoped groups, memberships, activities, participation, challenges, personal challenge progress, and staff updates.
+- Verified: open-group join/leave with capacity and duplicate protection; scheduled activities; attendance/missed participation; attendance-derived personal challenge refresh; staff-posted updates; compact member community view; privacy-safe individual progress; and role-scoped actions.
+- Demo data: beginner accountability group, running group, group attendance outcomes, upcoming activities, staff update, and an active 30-day attendance challenge are persisted locally.
+- Quality checks: Prisma schema and all 12 migrations up to date; typecheck passed; 33/33 automated tests passed; lint passed; production build passed.
+- Responsive QA: authenticated Community page passed Chrome checks at 320, 360, 390, 430, 768, 1024, 1440, and 1920px with no horizontal overflow.
+
+## Phase 12 Final QA — 2026-09-30
+
+- Completed integrated local-demo audit across member intelligence, interventions/outcomes, journeys, experience, floor operations, reception, and community. Each dashboard is backed by PostgreSQL data seeded through `npm run db:seed`; simulator-originated floor data remains clearly labeled.
+- Documentation: added README with prerequisites, environment, database bootstrap, reset/seed command, roles, local credentials, workers, architecture, simulator boundaries, and known limitations.
+- Quality gates: typecheck passed; 33/33 automated tests passed; lint passed; production build passed; Prisma migration status confirms all 12 migrations are current.
+- Browser QA: authenticated dashboard and Community layout checks passed with no horizontal overflow at 320, 360, 375, 390, 430, 768, 1024, 1280, 1440, and 1920px.
+- Known limitations: notifications, payments, access events, messaging, and occupancy are intentionally local/simulated. There is no external hardware, payment gateway, messaging provider, or medical functionality.
+
+## Training Mode — Complete
+
+- [x] Persisted role-scoped scenarios, progress, events, and reset boundary
+- [x] Training Center, guided steps, completion state, and active-mode indicator
+- [x] Full Gym Scenario and Practice Gym Demo
+- [x] Page help, terminology reference, and responsive guided controls
+- [x] Training data is isolated from normal demo operations; reset clears only training tracking and tagged scenario records
+- Verification: typecheck, lint, automated tests, production build, and responsive training QA
+

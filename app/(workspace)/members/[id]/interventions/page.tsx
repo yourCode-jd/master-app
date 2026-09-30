@@ -8,7 +8,7 @@ type Params = Promise<{ id: string }>;
 const label = (value: string) => value.replaceAll("_", " ");
 const tone = (priority: string) => priority === "CRITICAL" ? "danger" : priority === "HIGH" ? "warning" : "info" as const;
 export default async function MemberInterventionHistory({ params }: { params: Params }) {
-  const user = await requireUser("members:view"); const { id } = await params;
+  const user = await requireUser(); const { id } = await params;
   try { await assertMemberAccess(user, id, false); } catch { notFound(); }
   const [member, interventions] = await Promise.all([db.member.findFirst({ where: { id, gymId: user.gymId }, select: { fullName: true } }), db.intervention.findMany({ where: { gymId: user.gymId, memberId: id, ...(user.role === "TRAINER" ? { assignedToId: user.id } : {}) }, include: { assignedTo: { select: { name: true } }, interactions: { orderBy: { occurredAt: "desc" }, take: 1 } }, orderBy: { createdAt: "desc" } })]);
   if (!member) notFound();

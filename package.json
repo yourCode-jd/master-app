@@ -12,6 +12,8 @@
     "db:push": "tsx prisma/bootstrap.ts",
     "db:seed": "tsx prisma/seed.ts",
     "worker:intelligence": "tsx scripts/intelligence-worker.ts",
+    "worker:outcomes": "tsx scripts/outcome-worker.ts",
+    "worker:experience": "tsx scripts/experience-worker.ts",
     "test": "tsx --test tests/*.test.ts"
   },
   "dependencies": {

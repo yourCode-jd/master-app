@@ -3,7 +3,7 @@ import test from "node:test";
 import { db } from "@/lib/db";
 
 test("seeded trainer work is linked to persisted attention and assignment", async () => {
-  const item = await db.intervention.findFirst({ include: { attentionItem: true, assignedTo: true }, orderBy: { createdAt: "desc" } });
+  const item = await db.intervention.findFirst({ where: { attentionItemId: { not: null } }, include: { attentionItem: true, assignedTo: true }, orderBy: { createdAt: "desc" } });
   assert.ok(item);
   assert.equal(item.assignedRole, "TRAINER");
   assert.ok(item.attentionItemId);

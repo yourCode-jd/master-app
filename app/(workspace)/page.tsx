@@ -1,1 +1,1 @@
-export { default } from "@/components/intelligence-dashboard";
+import { redirect } from "next/navigation"; import { requireUser } from "@/lib/auth"; import IntelligenceDashboard from "@/components/intelligence-dashboard"; export default async function WorkspaceHome(){ const user=await requireUser("dashboard:view"); if(user.role==="TRAINER") redirect("/trainer"); if(user.role==="RECEPTION") redirect("/reception"); if(user.role==="MEMBER") redirect("/member"); return <IntelligenceDashboard/>; }

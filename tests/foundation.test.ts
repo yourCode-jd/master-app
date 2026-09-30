@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { homeForRole } from "@/lib/role-routing";
 import test from "node:test";
 import { db } from "@/lib/db";
 import { hasPermission } from "@/lib/permissions";
@@ -22,3 +23,4 @@ test("PostgreSQL seed contains tenant-scoped member and membership records", asy
   assert.ok(members >= 100);
   assert.equal(memberships, members);
 });
+test("member accounts use the member dashboard and have a linked seed profile", async () => { const user = await db.user.findUniqueOrThrow({ where: { email: "member@demo.gym" } }); const member = await db.member.findFirst({ where: { gymId: user.gymId, userId: user.id } }); assert.equal(user.role, "MEMBER"); assert.equal(homeForRole(user.role), "/member"); assert.ok(member); });

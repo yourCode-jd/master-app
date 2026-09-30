@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
-import { createIntervention, interventionTypes } from "@/app/actions/intervention-workflow";
+import { createIntervention } from "@/app/actions/intervention-workflow";
 import { DsButton, DsCard, DsInput, DsSelect, DsTextarea, Field } from "@/components/design-system";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { assertMemberAccess } from "@/lib/members";
 
+const interventionTypes = ["TRAINER_CHECK_IN", "GOAL_REVIEW", "PROGRAM_REASSESSMENT", "PERSONAL_OUTREACH", "PT_CONSULTATION", "RENEWAL_DISCUSSION", "WELCOME_CHECK_IN", "PROGRESS_CELEBRATION", "MEMBER_COMPLAINT_FOLLOW_UP", "MANAGER_REVIEW", "SAFETY_ESCALATION", "RECOVERY_CHECK_IN", "OTHER"] as const;
 type Search = Promise<{ attentionId?: string; memberId?: string }>;
 const title = (type: string) => type.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
 
