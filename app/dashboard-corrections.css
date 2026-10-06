@@ -1,6 +1,13 @@
 /* Dashboard correction pass: hierarchy, spacing, and navigation behavior. */
-html, body { min-height: 100%; }
-.shell { min-height: 100dvh; }
+html,
+body {
+  min-height: 100%;
+}
+
+.shell {
+  min-height: 100dvh;
+}
+
 .sidebar {
   position: fixed;
   z-index: 30;
@@ -10,7 +17,12 @@ html, body { min-height: 100%; }
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-.main { grid-column: 2; min-width: 0; }
+
+.main {
+  grid-column: 2;
+  min-width: 0;
+}
+
 .topbar {
   min-height: 78px;
   padding-inline: clamp(22px, 3vw, 48px);
@@ -18,43 +30,168 @@ html, body { min-height: 100%; }
   border-bottom: 1px solid rgb(255 255 255 / 8%);
   box-shadow: 0 10px 34px rgb(0 0 0 / 19%);
 }
-.mobile-menu { display: none !important; }
-.content { padding: clamp(34px, 4vw, 58px) clamp(22px, 3vw, 48px) 56px; }
-.page-header { margin-bottom: 38px; padding-bottom: 7px; }
-.page-header h1 { max-width: 18ch; }
-.stat-grid { gap: 18px; }
-.dashboard-grid { gap: 18px; margin-top: 18px; align-items: start; }
-.detail-grid, .progress-forms { gap: 18px; margin-bottom: 18px; }
-.card { padding: 22px; }
-.card > * { position: relative; z-index: 1; }
-.card::before { z-index: 0; }
-.field-label, .form-field label, .check-control, .toggle { color: #dce8e0; }
-.field-hint { color: #8d9b93; }
-.input, .textarea, .search-field { min-height: 44px; color: #f4faf6; }
-.textarea { min-height: 112px; }
-.input[type="date"] { color-scheme: dark; }
-.input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(.72); }
-.input option, .select option { color: #eff8f1; background: #121714; }
-.table td, .detail-row span, .member-link span { color: #a7b4ac; }
-.table td strong, .detail-row strong, .member-link strong, .list-item strong { color: #f0f7f2; }
-.section-title { margin-bottom: 17px; }
-.list-item { padding-block: 14px; }
-.topbar-right { gap: 12px; }
-.user-chip { padding: 4px 8px 4px 4px; border: 1px solid rgb(255 255 255 / 8%); border-radius: 999px; background: rgb(255 255 255 / 4%); }
-.demo-pill { padding: 6px 11px; }
-.filter-bar { gap: 12px; }
+
+.mobile-menu {
+  display: none !important;
+}
+
+.content {
+  padding: clamp(34px, 4vw, 58px) clamp(22px, 3vw, 48px) 56px;
+}
+
+.page-header {
+  margin-bottom: 38px;
+  padding-bottom: 7px;
+}
+
+.page-header h1 {
+  max-width: 18ch;
+}
+
+.stat-grid {
+  gap: 18px;
+}
+
+.dashboard-grid {
+  gap: 18px;
+  margin-top: 18px;
+  align-items: start;
+}
+
+.detail-grid,
+.progress-forms {
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.card {
+  padding: 22px;
+}
+
+.card>* {
+  position: relative;
+  z-index: 1;
+}
+
+.card::before {
+  z-index: 0;
+}
+
+.field-label,
+.form-field label,
+.check-control,
+.toggle {
+  color: #dce8e0;
+}
+
+.field-hint {
+  color: #8d9b93;
+}
+
+.input,
+.textarea,
+.search-field {
+  min-height: 44px;
+  color: #f4faf6;
+}
+
+.textarea {
+  min-height: 112px;
+}
+
+.input[type="date"] {
+  color-scheme: dark;
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(.72);
+}
+
+.input option,
+.select option {
+  color: #eff8f1;
+  background: #121714;
+}
+
+.table td,
+.detail-row span,
+.member-link span {
+  color: #a7b4ac;
+}
+
+.table td strong,
+.detail-row strong,
+.member-link strong,
+.list-item strong {
+  color: #f0f7f2;
+}
+
+.section-title {
+  margin-bottom: 17px;
+}
+
+.list-item {
+  padding-block: 14px;
+}
+
+.topbar-right {
+  gap: 12px;
+}
+
+.user-chip {
+  padding: 4px 8px 4px 4px;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 4%);
+}
+
+.demo-pill {
+  padding: 6px 11px;
+}
+
+.filter-bar {
+  gap: 12px;
+}
 
 @media (max-width: 900px) {
-  .sidebar { display: none; }
-  .main { grid-column: 1; }
-  .mobile-menu { display: inline-flex !important; }
-  .topbar { min-height: 70px; }
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    grid-column: 1;
+  }
+
+  .mobile-menu {
+    display: inline-flex !important;
+  }
+
+  .topbar {
+    min-height: 70px;
+  }
 }
 
 @media (max-width: 700px) {
-  .content { padding: 28px 16px 40px; }
-  .page-header { margin-bottom: 28px; }
-  .page-header h1 { max-width: none; }
-  .card { padding: 17px; }
-  .stat-grid, .dashboard-grid, .detail-grid, .progress-forms { gap: 12px; }
+  .content {
+    padding: 28px 16px 40px;
+  }
+
+  .page-header {
+    margin-bottom: 28px;
+  }
+
+  .page-header h1 {
+    max-width: none;
+  }
+
+  .card {
+    padding: 17px;
+  }
+
+  .stat-grid,
+  .dashboard-grid,
+  .detail-grid,
+  .progress-forms {
+    gap: 12px;
+  }
 }

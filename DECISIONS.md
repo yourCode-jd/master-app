@@ -515,3 +515,27 @@ These should not be introduced until the free/local demo and core product loop a
 - Why: Users can practice realistic workflows without a long manual or an unsafe training-only elevation of access.
 - Impact: Reset removes only training progress/events and tagged scenario records; ordinary member, intervention, and operational records remain untouched.
 
+
+## DEC-033 — Final demo validation uses project-local infrastructure and explicit route guards
+
+- Date: 2026-10-05
+- Status: Accepted
+- Decision: Run the local Gym Intelligence database on project-owned PostgreSQL port 5434, provide a startup command, and require explicit staff-role checks on operational pages in addition to navigation filtering.
+- Why: A shared port could silently route the preview to another project database, while hidden menu items alone do not protect direct URLs.
+- Impact: Preview login uses the seeded Gym Intelligence data, and member/reception accounts cannot bypass staff-only pages by typing a URL.
+
+## DEC-034 — First-trial staff access is Owner-managed while role rules stay fixed
+
+- Date: 2026-10-06
+- Status: Accepted
+- Decision: Add Owner-only local staff account management and active/inactive sign-in enforcement, while keeping role permissions as the existing fixed server-side matrix.
+- Why: A first gym trial needs real staff provisioning and offboarding, but editable individual permissions would expand security and audit scope without a settled policy.
+- Impact: Owner can create/manage Manager, Trainer, and Reception accounts; inactive accounts are rejected at login and on protected requests; custom permission editing remains intentionally deferred.
+
+## DEC-035 — Trial reports are operational summaries, not a new analytics platform
+
+- Date: 2026-10-06
+- Status: Accepted
+- Decision: Provide an Owner-only, tenant-scoped reports page with date/state/role filters and six action-focused summaries sourced directly from PostgreSQL.
+- Why: Owners need to review trial results without a broad reporting/exports project.
+- Impact: Member states, attention, outcomes, trainer activity, renewals, and experience/complaints can guide follow-up; exports and custom dashboards remain deferred.

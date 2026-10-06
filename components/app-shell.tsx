@@ -93,7 +93,7 @@ export function AppShell({
               <span className="avatar">{initials}</span>
               <span className="user-name">{user.name}</span>
             </div>
-            <span className="role-badge">{user.role}</span><LogoutControl/>
+            <LogoutControl/><span className="role-badge">{user.role}</span>
           </div>
         </header>
         <main className="content">{children}</main>

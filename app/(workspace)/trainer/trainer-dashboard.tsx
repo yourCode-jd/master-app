@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { createIntervention, startIntervention } from "@/app/actions/intervention-workflow";
 import { DsBadge, DsButton, DsCard, DsInput, DsSelect, DsTextarea, Field, StatCard } from "@/components/design-system";
-import { requireUser } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 type Search = Promise<{ q?: string; priority?: string; state?: string; due?: string; type?: string; status?: string }>;
@@ -10,7 +10,7 @@ const label = (value: string) => value.replaceAll("_", " ");
 const tone = (priority: string) => priority === "CRITICAL" ? "danger" : priority === "HIGH" ? "warning" : priority === "OPPORTUNITY" ? "success" : "info" as const;
 
 export default async function TrainerDashboard({ searchParams }: { searchParams: Search }) {
-  const user = await requireUser("members:view"); if (user.role === "MEMBER") notFound(); const filter = await searchParams;
+  const user = await requireRole(["OWNER", "MANAGER", "TRAINER"]); const filter = await searchParams;
   const trainerScope = user.role === "TRAINER" ? { assignedToId: user.id } : {}; const memberScope = user.role === "TRAINER" ? { trainerId: user.id } : {}; const now = new Date(); const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); const tomorrow = new Date(today.getTime() + 86400000);
   const where = { gymId: user.gymId, ...trainerScope, status: filter.status ? filter.status : { in: active }, ...(filter.priority ? { priority: filter.priority } : {}), ...(filter.type ? { type: filter.type } : {}), ...(filter.due === "TODAY" ? { dueAt: { gte: today, lt: tomorrow } } : filter.due === "OVERDUE" ? { dueAt: { lt: now } } : {}), ...(filter.q ? { member: { fullName: { contains: filter.q, mode: "insensitive" as const } } } : {}) };
   const [interventions, attention, reassessments, milestones, members] = await Promise.all([db.intervention.findMany({ where, include: { member: { select: { fullName: true, memberState: true } }, assignedTo: { select: { name: true } } }, orderBy: [{ dueAt: "asc" }, { createdAt: "desc" }], take: 100 }), db.attentionItem.findMany({ where: { gymId: user.gymId, status: { in: ["OPEN", "ASSIGNED", "IN_PROGRESS"] }, ...(user.role === "TRAINER" ? { member: memberScope } : {}) }, include: { member: { select: { id: true, fullName: true } } }, orderBy: { dueAt: "asc" }, take: 40 }), db.progressReview.findMany({ where: { gymId: user.gymId, nextReviewDate: { lte: new Date(Date.now() + 14 * 86400000) }, ...(user.role === "TRAINER" ? { trainerId: user.id } : {}) }, include: { member: { select: { fullName: true } } }, take: 12 }), db.milestone.findMany({ where: { gymId: user.gymId, ...(user.role === "TRAINER" ? { member: memberScope } : {}) }, include: { member: { select: { fullName: true } } }, orderBy: { achievedAt: "desc" }, take: 12 }), db.member.findMany({ where: { gymId: user.gymId, ...memberScope, membershipStatus: "ACTIVE" }, select: { id: true, fullName: true }, orderBy: { fullName: "asc" }, take: 150 })]);

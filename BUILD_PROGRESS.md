@@ -540,3 +540,18 @@ Update after every phase.
 - [x] Training data is isolated from normal demo operations; reset clears only training tracking and tagged scenario records
 - Verification: typecheck, lint, automated tests, production build, and responsive training QA
 
+
+## Final validation / demo preparation — 2026-10-05
+
+- [x] Corrected the local project database endpoint to port 5434 and added `npm run db:local:start`; this prevents the preview from connecting to another project’s PostgreSQL instance.
+- [x] Verified all five demo roles, their default workspaces, member ownership boundaries, role-scoped Training Center tracks, and unauthorized deep-link redirects.
+- [x] Tightened staff-only Floor, Notifications, Trainer queue, and intervention-detail route guards.
+- [x] Confirmed all 13 Prisma migrations, 37 automated tests, typecheck, production build artifact, real seeded dashboard data, simulator labels, and responsive checks at 320/360/390/430/768/1024/1440/1920px.
+- [x] Preview restored on http://localhost:3001; all demo accounts use `demo123`.
+
+## First gym trial minimum scope — 2026-10-06
+
+- [x] Added Owner-only Staff Management with searchable staff accounts, Manager/Trainer/Reception role assignment, temporary local passwords, active/inactive status, protected Owner account, audit records, and server-side inactive-session blocking.
+- [x] Added Owner-only Action-Focused Reports using tenant-scoped PostgreSQL data for member states, attention, intervention outcomes, trainer activity, renewals, and experience/complaint summaries.
+- [x] Deferred custom permission editing, community creation/recommendations, trial assignment, and notification read state to preserve the focused first-trial scope.
+- Verification: migration 0014 applied; 39 automated tests, typecheck, lint, live Owner/Manager/inactive access checks, and Staff/Reports responsive checks at 320/360/390/430/768/1024/1440/1920px passed.

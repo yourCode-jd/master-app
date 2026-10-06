@@ -33,8 +33,11 @@ All demo users use password `demo123`:
 This seed contains synthetic data only. It includes declining, onboarding, plateau, progress, renewal, experience, equipment-safety, reception, and community scenarios.
 
 ## Run locally
+Start the project-local PostgreSQL database (port 5434), then run the app:
 
 ```bash
+
+npm run db:local:start
 npm run dev -- --hostname 0.0.0.0 --port 3001
 ```
 

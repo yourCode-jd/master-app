@@ -12,7 +12,7 @@ export async function login(_: LoginState, formData: FormData): Promise<LoginSta
   const parsed = credentials.safeParse({ email: formData.get("email"), password: formData.get("password") });
   if (!parsed.success) return { error: "Enter a valid email and password." };
   const user = await db.user.findUnique({ where: { email: parsed.data.email.toLowerCase() } });
-  if (!user || !verifyPassword(parsed.data.password, user.passwordHash)) return { error: "Those demo credentials do not match." };
+  if (!user || !user.active || !verifyPassword(parsed.data.password, user.passwordHash)) return { error: "Those demo credentials do not match." };
   await createSession(user);
   redirect(homeForRole(user.role as Role));
 }

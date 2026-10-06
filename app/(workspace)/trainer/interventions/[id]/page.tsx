@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { assignIntervention, completeIntervention, manageIntervention, startIntervention } from "@/app/actions/intervention-workflow";
 import { DsBadge, DsButton, DsCard, DsInput, DsSelect, DsTextarea, Field } from "@/components/design-system";
-import { requireUser } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 type Params = Promise<{ id: string }>;
@@ -9,7 +9,7 @@ const label = (value: string | null) => value ? value.replaceAll("_", " ") : "â€
 const tone = (priority: string) => priority === "CRITICAL" ? "danger" : priority === "HIGH" ? "warning" : priority === "OPPORTUNITY" ? "success" : "info" as const;
 
 export default async function InterventionDetail({ params }: { params: Params }) {
-  const user = await requireUser("members:view"); if (user.role === "MEMBER") notFound();
+  const user = await requireRole(["OWNER", "MANAGER", "TRAINER"]);
   const { id } = await params;
   const item = await db.intervention.findFirst({ where: { id, gymId: user.gymId, ...(user.role === "TRAINER" ? { assignedToId: user.id } : {}) }, include: { member: { include: { goals: { where: { status: "ACTIVE" }, take: 1 }, visits: { orderBy: { visitedAt: "desc" }, take: 8 }, metrics: { orderBy: { recordedAt: "desc" }, take: 3 }, trainer: { select: { name: true } } } }, attentionItem: true, assignedTo: { select: { name: true } }, createdBy: { select: { name: true } }, assignments: { orderBy: { createdAt: "desc" } }, interactions: { include: { trainer: { select: { name: true } } }, orderBy: { occurredAt: "desc" } } } });
   if (!item) notFound();

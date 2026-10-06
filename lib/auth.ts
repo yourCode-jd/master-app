@@ -35,7 +35,7 @@ export async function requireUser(permission?: Permission) {
   const session = await getSession();
   if (!session) redirect("/login");
   const user = await db.user.findUnique({ where: { id: session.userId } });
-  if (!user || user.gymId !== session.gymId) redirect("/login");
+  if (!user || !user.active || user.gymId !== session.gymId) redirect("/login");
   if (permission && !hasPermission(user.role, permission)) redirect("/forbidden");
   return user;
 }

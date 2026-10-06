@@ -57,6 +57,7 @@ model User {
   name                  String
   email                 String             @unique
   role                  String
+  active                Boolean            @default(true)
   passwordHash          String
   createdAt             DateTime           @default(now())
   gym                   Gym                @relation(fields: [gymId], references: [id], onDelete: Cascade)
